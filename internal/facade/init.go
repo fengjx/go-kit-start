@@ -1,0 +1,5 @@
+package facade
+
+func Init() {
+
+}

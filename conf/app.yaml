@@ -1,0 +1,11 @@
+env: local
+server:
+  listen: ":8080"
+log:
+  level: debug
+  appender: console
+redis:
+  default:
+
+kafka:
+  default:
