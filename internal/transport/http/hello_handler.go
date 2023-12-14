@@ -8,14 +8,25 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	"go.uber.org/zap"
 
+	"github.com/fengjx/go-kit-start/common/errno"
 	"github.com/fengjx/go-kit-start/internal/current"
 	"github.com/fengjx/go-kit-start/internal/endpoint"
+	"github.com/fengjx/go-kit-start/internal/transport/http/binding"
 )
 
 func decodeSayHelloRequest(ctx context.Context, r *http.Request) (interface{}, error) {
-	name := r.FormValue("name")
-	request := &endpoint.SayHelloReq{Name: name}
 	logger := current.Logger(ctx)
+	request := &endpoint.SayHelloReq{}
+	err := binding.ShouldBind(r, request)
+	if err != nil {
+		logger.Info("decode say hello err", zap.Error(err))
+		errn := &errno.Errno{
+			Code:     4,
+			HttpCode: http.StatusBadRequest,
+			Msg:      err.Error(),
+		}
+		return nil, errn
+	}
 	logger.Info("decode say hello", zap.Any("req", request))
 	return request, nil
 }
