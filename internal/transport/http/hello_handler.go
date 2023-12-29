@@ -12,12 +12,13 @@ import (
 	"github.com/fengjx/go-kit-start/internal/current"
 	"github.com/fengjx/go-kit-start/internal/endpoint"
 	"github.com/fengjx/go-kit-start/internal/transport/http/binding"
+	"github.com/fengjx/go-kit-start/pb"
 )
 
-func decodeSayHelloRequest(ctx context.Context, r *http.Request) (interface{}, error) {
+func (h *HelloHandler) decodeSayHelloRequest(ctx context.Context, r *http.Request) (interface{}, error) {
 	logger := current.Logger(ctx)
-	request := &endpoint.SayHelloReq{}
-	err := binding.ShouldBind(r, request)
+	helloReq := &pb.HelloReq{}
+	err := binding.ShouldBind(r, helloReq)
 	if err != nil {
 		logger.Info("decode say hello err", zap.Error(err))
 		errn := &errno.Errno{
@@ -27,30 +28,30 @@ func decodeSayHelloRequest(ctx context.Context, r *http.Request) (interface{}, e
 		}
 		return nil, errn
 	}
-	logger.Info("decode say hello", zap.Any("req", request))
-	return request, nil
+	logger.Info("decode say hello", zap.Any("req", helloReq))
+	return helloReq, nil
 }
 
 type HelloHandler struct {
 }
 
-func NewHelloHandler() *HelloHandler {
+func newHelloHandler() *HelloHandler {
 	return &HelloHandler{}
 }
 
-func (c HelloHandler) Bind(router *chi.Mux) {
-	router.Route(openAPI+"/hello", func(r chi.Router) {
-		r.Handle("/hi", c.sayHello())
+func (h *HelloHandler) Bind(router *chi.Mux) {
+	router.Route(openAPI+"/greeter", func(r chi.Router) {
+		r.Handle("/hi", h.sayHello())
 	})
 }
 
-func (c HelloHandler) sayHello() *httptransport.Server {
+func (h *HelloHandler) sayHello() *httptransport.Server {
 	options := []httptransport.ServerOption{
 		httptransport.ServerErrorEncoder(errorEncoder),
 	}
 	return httptransport.NewServer(
-		endpoint.MakeSayHelloEndpoint(),
-		decodeSayHelloRequest,
+		endpoint.GetInst().GreeterEndpoints.MakeSayHelloEndpoint(),
+		h.decodeSayHelloRequest,
 		encodeResponse,
 		options...,
 	)

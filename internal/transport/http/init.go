@@ -13,7 +13,7 @@ func Start() {
 		traceMiddleware,
 		middleware.Logger,
 	).Add(
-		NewHelloHandler(),
+		newHelloHandler(),
 	).Start()
 }
 

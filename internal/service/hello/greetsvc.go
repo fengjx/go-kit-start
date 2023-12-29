@@ -16,8 +16,8 @@ func newGreetService() *greetService {
 	return &greetService{}
 }
 
-func (svc *greetService) sayHello(ctx context.Context, name string) string {
+func (svc *greetService) SayHi(ctx context.Context, name string) (string, error) {
 	logger := current.Logger(ctx)
-	logger.Info("say hello", zap.Any("name", name))
-	return fmt.Sprintf("hello: %s", name)
+	logger.Info("say hi", zap.Any("name", name))
+	return fmt.Sprintf("Hi: %s", name), nil
 }

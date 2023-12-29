@@ -8,10 +8,10 @@ import (
 	"github.com/fengjx/go-kit-start/internal/transport/http"
 )
 
-func Start(ctx context.Context) {
+func Start(_ context.Context) {
 	logger.Log.Info("transport init")
-	http.Start()
-	grpc.Start()
+	go http.Start()
+	go grpc.Start()
 }
 
 func Stop() {

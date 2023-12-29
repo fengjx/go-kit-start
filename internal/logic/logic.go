@@ -1,9 +1,9 @@
-package hello
+package logic
 
 import "sync"
 
 type Inst struct {
-	GreetSvc *greetService
+	HelloLogic *helloLogic
 }
 
 var ins *Inst
@@ -12,7 +12,7 @@ var insOnce sync.Once
 func GetInst() *Inst {
 	insOnce.Do(func() {
 		ins = &Inst{
-			GreetSvc: newGreetService(),
+			HelloLogic: newHelloLogic(),
 		}
 	})
 	return ins
